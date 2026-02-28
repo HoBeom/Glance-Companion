@@ -11,9 +11,7 @@ struct MainView: View {
     let bleManager: BLEManager
     let calendarManager: CalendarManager
     @Binding var appState: AppState
-    
-    @State private var displayConfig = DisplayConfig()
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -24,13 +22,13 @@ struct MainView: View {
                         useDemoData: appState.useDemoData,
                         syncAction: syncToX4
                     )
-                    
+
                     // Calendar & Reminders Selection
                     CalendarSection(calendarManager: calendarManager)
-                    
+
                     // Display Settings
                     SettingsSection(
-                        config: $displayConfig,
+                        config: $appState.displayConfig,
                         useDemoData: $appState.useDemoData
                     )
                 }
@@ -40,11 +38,11 @@ struct MainView: View {
             .navigationTitle("Glance Companion")
         }
     }
-    
+
     private func syncToX4() {
         Task {
             bleManager.addLog("Starting sync...")
-            
+
             let data: CalendarData
             if appState.useDemoData {
                 data = DemoData.demoCalendarData
@@ -52,15 +50,15 @@ struct MainView: View {
             } else {
                 data = await calendarManager.fetchCalendarData()
             }
-            
+
             bleManager.addLog("Found \(data.events.count) events, \(data.reminders.count) reminders")
-            
-            let package = SyncPackage(calendarData: data, displayConfig: displayConfig)
+
+            let package = SyncPackage(calendarData: data, displayConfig: appState.displayConfig)
             guard let json = package.toJSON() else {
                 bleManager.addLog("ERROR: JSON encoding failed")
                 return
             }
-            
+
             bleManager.addLog("JSON size: \(json.count) bytes")
             bleManager.sendData(json)
         }

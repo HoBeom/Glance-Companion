@@ -5,6 +5,7 @@
 
 
 import SwiftUI
+import AppIntents
 
 @main
 struct Glance_CompanionApp: App {
@@ -14,19 +15,27 @@ struct Glance_CompanionApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if appState.hasCompletedOnboarding {
-                MainView(
-                    bleManager: bleManager,
-                    calendarManager: calendarManager,
-                    appState: $appState
-                )
-            } else {
-                OnboardingView(
-                    calendarManager: calendarManager,
-                    onComplete: {
-                        appState.completeOnboarding()
-                    }
-                )
+            Group {
+                if appState.hasCompletedOnboarding {
+                    MainView(
+                        bleManager: bleManager,
+                        calendarManager: calendarManager,
+                        appState: $appState
+                    )
+                } else {
+                    OnboardingView(
+                        calendarManager: calendarManager,
+                        onComplete: {
+                            appState.completeOnboarding()
+                        }
+                    )
+                }
+            }
+            .task {
+                // Register shared instances so SyncGlanceIntent can access them
+                AppDependencyManager.shared.add(dependency: bleManager)
+                AppDependencyManager.shared.add(dependency: calendarManager)
+                AppDependencyManager.shared.add(dependency: appState)
             }
         }
     }

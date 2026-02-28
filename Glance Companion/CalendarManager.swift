@@ -434,13 +434,45 @@ struct ReminderItem: Codable, Identifiable, Sendable {
     }
 }
 
+// MARK: - Sleep Screen Mode
+
+enum SleepScreenMode: Int, Codable, Sendable, CaseIterable {
+    case wallpaper = 0
+    case today = 1
+    case upcoming = 2
+    case reminders = 3
+
+    var label: String {
+        switch self {
+        case .wallpaper:  return "Wallpaper"
+        case .today:      return "Today"
+        case .upcoming:   return "Upcoming"
+        case .reminders:  return "Reminders"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .wallpaper:  return "photo"
+        case .today:      return "calendar"
+        case .upcoming:   return "calendar.badge.clock"
+        case .reminders:  return "checklist"
+        }
+    }
+}
+
 // MARK: - Display Configuration
 
 struct DisplayConfig: Codable, Sendable {
+    var autoSleepEnabled: Bool = true
     var autoSleepMinutes: Int = 5
     var useDithering: Bool = true
     var use24HourTime: Bool = true
     var utcOffsetSeconds: Int = TimeZone.current.secondsFromGMT()
+    var wakeScheduleEnabled: Bool = false
+    var wakeScheduleHour: Int = 7
+    var wakeScheduleMinute: Int = 0
+    var sleepScreen: SleepScreenMode = .wallpaper
 }
 
 // MARK: - Sync Package (sent to X4)
