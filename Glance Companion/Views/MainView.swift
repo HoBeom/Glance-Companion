@@ -14,8 +14,9 @@ struct MainView: View {
 
     var body: some View {
         NavigationStack {
-            GlassEffectContainer {
-                ScrollView {
+
+            ScrollView {
+                GlassEffectContainer {
                     VStack(spacing: 20) {
                         // Connection & Sync Section
                         ConnectionSection(
@@ -23,19 +24,20 @@ struct MainView: View {
                             useDemoData: appState.useDemoData,
                             syncAction: syncToX4
                         )
-                        
+
                         // Calendar & Reminders Selection
                         CalendarSection(calendarManager: calendarManager)
-                        
+
                         // Display Settings
                         SettingsSection(
                             config: $appState.displayConfig,
                             useDemoData: $appState.useDemoData
                         )
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 20)
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 20)
+
             }
             .navigationTitle("Glance Companion")
         }
