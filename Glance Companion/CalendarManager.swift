@@ -215,6 +215,46 @@ final class CalendarManager {
         return CalendarData(events: fetchedEvents, reminders: fetchedReminders)
     }
 
+    /// Apple 캘린더 + TickTick 태스크를 병합한 CalendarData 반환
+    func fetchCalendarData(tickTick: TickTickManager) async -> CalendarData {
+        var fetchedEvents: [CalendarEvent] = []
+        var fetchedReminders: [ReminderItem] = []
+
+        if calendarAuthorized {
+            fetchedEvents = fetchEvents()
+        }
+        if remindersAuthorized {
+            fetchedReminders = await fetchReminders()
+        }
+
+        // TickTick 태스크 병합
+        if tickTick.isAuthenticated {
+            let tickTickReminders = (try? await tickTick.fetchAsReminders(daysAhead: 7)) ?? []
+            let merged = Array((fetchedReminders + tickTickReminders).prefix(maxReminders))
+            fetchedReminders = merged
+        }
+
+        return CalendarData(events: fetchedEvents, reminders: fetchedReminders)
+    }
+
+    /// X4에서 완료된 ID를 Apple Reminders 또는 TickTick 양쪽에 처리
+    func completeReminders(ids: [String], tickTick: TickTickManager) {
+        var appleIDs: [String] = []
+        for id in ids {
+            if let task = tickTick.cachedRawTasks.first(where: { $0.id == id }) {
+                Task {
+                    try? await tickTick.completeTask(
+                        taskID: task.id,
+                        projectID: task.projectId ?? ""
+                    )
+                }
+            } else {
+                appleIDs.append(id)
+            }
+        }
+        if !appleIDs.isEmpty { completeReminders(ids: appleIDs) }
+    }
+
     // MARK: - Private Fetch
 
     private func fetchEvents() -> [CalendarEvent] {

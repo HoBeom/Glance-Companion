@@ -18,6 +18,7 @@ struct SyncGlanceIntent: AppIntent {
 
     @Dependency var bleManager: BLEManager
     @Dependency var calendarManager: CalendarManager
+    @Dependency var tickTickManager: TickTickManager
     @Dependency var appState: AppState
 
     @MainActor
@@ -26,7 +27,7 @@ struct SyncGlanceIntent: AppIntent {
         if appState.useDemoData {
             data = DemoData.demoCalendarData
         } else {
-            data = await calendarManager.fetchCalendarData()
+            data = await calendarManager.fetchCalendarData(tickTick: tickTickManager)
         }
 
         let package = SyncPackage(calendarData: data, displayConfig: appState.displayConfig)

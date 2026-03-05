@@ -10,6 +10,7 @@ import SwiftUI
 struct MainView: View {
     let bleManager: BLEManager
     let calendarManager: CalendarManager
+    let tickTickManager: TickTickManager
     @Binding var appState: AppState
 
     var body: some View {
@@ -27,6 +28,9 @@ struct MainView: View {
 
                         // Calendar & Reminders Selection
                         CalendarSection(calendarManager: calendarManager)
+
+                        // TickTick Integration
+                        TickTickSection(tickTickManager: tickTickManager)
 
                         // Display Settings
                         SettingsSection(
@@ -52,7 +56,7 @@ struct MainView: View {
                 data = DemoData.demoCalendarData
                 bleManager.addLog("Using demo data")
             } else {
-                data = await calendarManager.fetchCalendarData()
+                data = await calendarManager.fetchCalendarData(tickTick: tickTickManager)
             }
 
             bleManager.addLog("Found \(data.events.count) events, \(data.reminders.count) reminders")
