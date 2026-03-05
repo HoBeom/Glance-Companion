@@ -69,9 +69,9 @@ final class TickTickManager {
     // 1. https://developer.ticktick.com 에서 앱 등록 후 아래 값 교체
     // 2. Developer Portal의 Redirect URI 에 "glancecompanion://oauth/callback" 등록
     // 3. Xcode: Target → Info → URL Types → URL Schemes 에 "glancecompanion" 추가
-    let clientID     = "YOUR_CLIENT_ID"
-    let clientSecret = "YOUR_CLIENT_SECRET"
-    let redirectURI  = "glancecompanion://oauth/callback"
+    let clientID     = "b2gqn6B2EvAhP0Dx89"
+    let clientSecret = "ddXUzLi8K5KdXoVMWR0PHyk57H3IBXWc"
+    let redirectURI  = "http://localhost:8080/callback"
 
     private let authorizeURL = "https://ticktick.com/oauth/authorize"
     private let tokenURL     = "https://ticktick.com/oauth/token"

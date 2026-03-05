@@ -93,19 +93,12 @@ struct TickTickSection: View {
 
         let session = ASWebAuthenticationSession(
             url: authURL,
-            callbackURLScheme: "glancecompanion"
+            callbackURLScheme: "localhost"
         ) { callbackURL, error in
             guard let url = callbackURL else { return }
             Task { await tickTickManager.handleCallback(url: url) }
         }
         session.prefersEphemeralWebBrowserSession = false
-
-        // iOS 13+ 에서 presentationContextProvider 필요
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let root = windowScene.windows.first?.rootViewController {
-            session.presentationContextProvider = root as? ASWebAuthenticationPresentationContextProviding
-        }
-
         session.start()
     }
 }

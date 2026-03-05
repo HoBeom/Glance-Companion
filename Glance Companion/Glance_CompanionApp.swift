@@ -41,11 +41,6 @@ struct Glance_CompanionApp: App {
                 AppDependencyManager.shared.add(dependency: appState)
             }
         }
-        .onOpenURL { url in
-            // TickTick OAuth2 콜백 처리
-            if url.scheme == "glancecompanion" {
-                Task { await tickTickManager.handleCallback(url: url) }
-            }
-        }
+
     }
 }
